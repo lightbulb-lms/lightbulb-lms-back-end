@@ -5,6 +5,7 @@ import edu.uncc.itcs.lightbulblms.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -19,6 +20,7 @@ public class UserController {
 
     @GetMapping("/users")
     @ApiOperation(value = "List all users", response = AllUsersResponse.class)
+    @PreAuthorize("hasAuthority('SCOPE_admin')")
     public ResponseEntity<AllUsersResponse> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }

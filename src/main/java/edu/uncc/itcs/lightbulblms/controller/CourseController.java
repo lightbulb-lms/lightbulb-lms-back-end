@@ -26,7 +26,7 @@ public class CourseController {
     }
 
     @GetMapping("/courses")
-    @ApiOperation(value = "Retrieve all courses", notes = "Retrieves all courses")
+    @ApiOperation(value = "Retrieve all courses", notes = "Retrieves all courses", response = AllCoursesResponse.class)
     public ResponseEntity<AllCoursesResponse> getAllCourses() {
         AllCoursesResponse response = new AllCoursesResponse();
         response.setCourses(courseRepo.findAll());
@@ -34,7 +34,7 @@ public class CourseController {
     }
 
     @PostMapping("/course")
-    @ApiOperation(value = "Create a new course", notes = "All fields are required")
+    @ApiOperation(value = "Create a new course", notes = "All fields are required", response = Course.class)
     public ResponseEntity<Course> createNewCourse(@Valid @RequestBody CreateCourseRequest request) {
         Course newCourse = new Course(request);
         return ResponseEntity.ok(courseRepo.save(newCourse));

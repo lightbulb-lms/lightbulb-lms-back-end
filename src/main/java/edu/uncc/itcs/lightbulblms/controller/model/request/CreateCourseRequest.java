@@ -1,14 +1,19 @@
 package edu.uncc.itcs.lightbulblms.controller.model.request;
 
+import io.swagger.annotations.ApiModelProperty;
+
 import javax.validation.constraints.NotBlank;
 
 public class CreateCourseRequest {
+    @ApiModelProperty(value = "Title of course", required = true)
     @NotBlank(message = "courseTitle cannot be blank")
     private String title;
 
+    @ApiModelProperty(value = "Description of course", required = true)
     @NotBlank(message = "courseDescription cannot be blank")
     private String description;
 
+    @ApiModelProperty(value = "Code for course", required = true)
     @NotBlank(message = "courseCode cannot be blank")
     private String courseCode;
 

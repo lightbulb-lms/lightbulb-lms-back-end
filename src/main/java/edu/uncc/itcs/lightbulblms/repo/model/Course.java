@@ -2,15 +2,12 @@ package edu.uncc.itcs.lightbulblms.repo.model;
 
 import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Course {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column

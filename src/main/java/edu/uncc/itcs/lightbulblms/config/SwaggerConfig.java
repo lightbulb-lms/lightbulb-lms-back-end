@@ -1,8 +1,10 @@
 package edu.uncc.itcs.lightbulblms.config;
 
+import edu.uncc.itcs.lightbulblms.controller.annotation.AdminOperation;
+import edu.uncc.itcs.lightbulblms.controller.annotation.StudentOperation;
+import edu.uncc.itcs.lightbulblms.controller.annotation.TeacherOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -31,10 +33,39 @@ public class SwaggerConfig {
                     "http", "bearer", "jwt", Collections.emptyList()));
 
     @Bean
-    public Docket api() {
+    public Docket adminAPIs() {
         return new Docket(DocumentationType.OAS_30)
+                .groupName("Admin")
                 .select()
-                .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
+                .apis(RequestHandlerSelectors.withMethodAnnotation(AdminOperation.class))
+                .paths(PathSelectors.any())
+                .build()
+                .apiInfo(apiInfo())
+                .securitySchemes(SECURITY_SCHEMES)
+                .securityContexts(AUTHENTICATED_API)
+                ;
+    }
+
+    @Bean
+    public Docket teacherAPIs() {
+        return new Docket(DocumentationType.OAS_30)
+                .groupName("Teacher")
+                .select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(TeacherOperation.class))
+                .paths(PathSelectors.any())
+                .build()
+                .apiInfo(apiInfo())
+                .securitySchemes(SECURITY_SCHEMES)
+                .securityContexts(AUTHENTICATED_API)
+                ;
+    }
+
+    @Bean
+    public Docket studentAPIs() {
+        return new Docket(DocumentationType.OAS_30)
+                .groupName("Student")
+                .select()
+                .apis(RequestHandlerSelectors.withMethodAnnotation(StudentOperation.class))
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(apiInfo())

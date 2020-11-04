@@ -1,12 +1,7 @@
 package edu.uncc.itcs.lightbulblms.controller.model.request;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import javax.validation.constraints.NotBlank;
 
-@Data
-@NoArgsConstructor
 public class CreateCourseRequest {
     @NotBlank(message = "courseTitle cannot be blank")
     private String title;
@@ -16,4 +11,31 @@ public class CreateCourseRequest {
 
     @NotBlank(message = "courseCode cannot be blank")
     private String courseCode;
+
+    public CreateCourseRequest() {
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getCourseCode() {
+        return courseCode;
+    }
+
+    public void setCourseCode(String courseCode) {
+        this.courseCode = courseCode;
+    }
 }

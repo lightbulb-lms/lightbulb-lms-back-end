@@ -1,6 +1,8 @@
 package edu.uncc.itcs.lightbulblms.service;
 
 import edu.uncc.itcs.lightbulblms.controller.model.response.AllUsersResponse;
+import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMember;
+import edu.uncc.itcs.lightbulblms.controller.model.response.RoleEnum;
 import edu.uncc.itcs.lightbulblms.service.model.User;
 import edu.uncc.itcs.lightbulblms.service.model.response.OktaUsersResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +16,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.annotation.PostConstruct;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -38,6 +42,8 @@ public class UserService {
     private List<User> studentUsers;
     private List<User> teacherUsers;
 
+    private Map<String, CourseMember> usersMap = new HashMap<>();
+
     @PostConstruct
     private void init() {
         RestTemplate restTemplate = new RestTemplate();
@@ -50,7 +56,6 @@ public class UserService {
                 .host(hostname)
                 .path("/api/v1/groups/{groupID}/users");
 
-
         ResponseEntity<OktaUsersResponse[]> adminUsersResponse = restTemplate.exchange(uriComponentsBuilder
                 .buildAndExpand(adminGroup).toUri(), HttpMethod.GET, requestEntity, OktaUsersResponse[].class);
         adminUsers = Arrays.stream(adminUsersResponse.getBody()).map(User::new).collect(Collectors.toList());
@@ -61,10 +66,18 @@ public class UserService {
 
         ResponseEntity<OktaUsersResponse[]> teacherUsersResponse = restTemplate.exchange(uriComponentsBuilder
                 .buildAndExpand(teacherGroup).toUri(), HttpMethod.GET, requestEntity, OktaUsersResponse[].class);
-        teacherUsers = Arrays.stream(studentUsersResponse.getBody()).map(User::new).collect(Collectors.toList());
+        teacherUsers = Arrays.stream(teacherUsersResponse.getBody()).map(User::new).collect(Collectors.toList());
+
+        adminUsers.forEach(user -> usersMap.put(user.getUserID(), new CourseMember(user, RoleEnum.ADMIN)));
+        studentUsers.forEach(user -> usersMap.put(user.getUserID(), new CourseMember(user, RoleEnum.STUDENT)));
+        teacherUsers.forEach(user -> usersMap.put(user.getUserID(), new CourseMember(user, RoleEnum.TEACHER)));
     }
 
     public AllUsersResponse getAllUsers() {
         return new AllUsersResponse(adminUsers, studentUsers, teacherUsers);
+    }
+
+    public Map<String, CourseMember> getUsersMap() {
+        return usersMap;
     }
 }

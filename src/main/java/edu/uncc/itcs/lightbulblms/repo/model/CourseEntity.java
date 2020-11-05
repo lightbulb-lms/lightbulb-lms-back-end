@@ -5,7 +5,8 @@ import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
 import javax.persistence.*;
 
 @Entity
-public class Course {
+@Table(name = "COURSE")
+public class CourseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -19,13 +20,13 @@ public class Course {
     @Column
     private String courseCode;
 
-    public Course(CreateCourseRequest request) {
+    public CourseEntity(CreateCourseRequest request) {
         this.courseTitle = request.getTitle();
         this.courseDescription = request.getDescription();
         this.courseCode = request.getCourseCode();
     }
 
-    public Course() {
+    public CourseEntity() {
     }
 
     public Integer getId() {

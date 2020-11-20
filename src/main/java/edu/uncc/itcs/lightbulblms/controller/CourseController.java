@@ -142,7 +142,7 @@ public class CourseController {
                                               @Valid @PathVariable("contentId") @Positive @ApiParam(value = "The content ID, as retrieved by the /course/{courseId}/content API") Integer contentId,
                                               JwtAuthenticationToken auth) {
         if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
-            courseService.deleteCourseContent(contentId);
+            courseService.deleteCourseContent(contentId, courseId);
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

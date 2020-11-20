@@ -87,18 +87,18 @@ public class CourseService {
     public CourseContent createContentForCourseId(Integer courseId, CourseContentRequest request) {
         CourseContentEntity entity = new CourseContentEntity(courseRepo.findById(courseId).get(), request);
         CourseContentEntity savedEntity = courseContentRepo.save(entity);
-        return new CourseContent(entity);
+        return new CourseContent(savedEntity);
     }
 
     public CourseContent updateContentForCourseId(Integer courseId, Integer contentId, CourseContentRequest request) {
-        CourseContentEntity entity = courseContentRepo.findById(contentId).get();
+        CourseContentEntity entity = courseContentRepo.findByIdAndCourseId(contentId, courseId);
         entity.setContent(request.getContent());
         entity.setLastUpdateDate(LocalDateTime.now());
         CourseContentEntity updatedEntry = courseContentRepo.save(entity);
         return new CourseContent(updatedEntry);
     }
 
-    public void deleteCourseContent(Integer contentId) {
-        courseContentRepo.deleteById(contentId);
+    public void deleteCourseContent(Integer contentId, Integer courseId) {
+        courseContentRepo.deleteByIdAndCourseId(contentId, courseId);
     }
 }

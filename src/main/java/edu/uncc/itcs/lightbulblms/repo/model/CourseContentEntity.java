@@ -4,6 +4,8 @@ import edu.uncc.itcs.lightbulblms.controller.model.request.CourseContentRequest;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "course_content")
@@ -30,7 +32,8 @@ public class CourseContentEntity {
     public CourseContentEntity(CourseEntity courseEntity, CourseContentRequest request) {
         this.course = courseEntity;
         this.content = request.getContent();
-        this.lastUpdateDate = LocalDateTime.now();
+        this.creationDate = ZonedDateTime.now(ZoneId.of("GMT")).toLocalDateTime();
+        this.lastUpdateDate = ZonedDateTime.now(ZoneId.of("GMT")).toLocalDateTime();
     }
 
     public Integer getId() {

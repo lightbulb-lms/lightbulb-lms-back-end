@@ -3,8 +3,10 @@ package edu.uncc.itcs.lightbulblms.controller;
 import edu.uncc.itcs.lightbulblms.controller.annotation.AdminOperation;
 import edu.uncc.itcs.lightbulblms.controller.annotation.StudentOperation;
 import edu.uncc.itcs.lightbulblms.controller.annotation.TeacherOperation;
+import edu.uncc.itcs.lightbulblms.controller.model.request.CourseContentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CourseMemberAssignmentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
+import edu.uncc.itcs.lightbulblms.controller.model.response.CourseContent;
 import edu.uncc.itcs.lightbulblms.controller.model.response.CourseContentResponse;
 import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMembersResponse;
 import edu.uncc.itcs.lightbulblms.controller.model.response.MultipleCoursesResponse;
@@ -95,12 +97,25 @@ public class CourseController {
     }
 
     @GetMapping("/course/{courseId}/content")
-    @ApiOperation(value = "Retrieve content for a given course", response = CourseMembersResponse.class)
+    @ApiOperation(value = "Retrieve content for a given course", response = CourseContentResponse.class)
     @TeacherOperation
     @StudentOperation
     public ResponseEntity<CourseContentResponse> getCourseContentForCourseID(@Valid @PathVariable("courseId") @Positive @ApiParam(value = "The course ID, as retrieved by the /courses API") Integer courseId, JwtAuthenticationToken auth) {
         if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
             return ResponseEntity.ok(courseService.getCourseContentForCourseId(courseId));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @PostMapping("/course/{courseId}/content")
+    @ApiOperation(value = "Create a new piece of content content for a given course", response = CourseContent.class)
+    @TeacherOperation
+    public ResponseEntity<CourseContent> createNewCourseContentForCourseID(@Valid @PathVariable("courseId") @Positive @ApiParam(value = "The course ID, as retrieved by the /courses API") Integer courseId,
+                                                                           @Valid @RequestBody CourseContentRequest request,
+                                                                           JwtAuthenticationToken auth) {
+        if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
+            return ResponseEntity.ok(courseService.createContentForCourseId(courseId, request));
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

@@ -1,10 +1,13 @@
 package edu.uncc.itcs.lightbulblms.repo.model;
 
+import edu.uncc.itcs.lightbulblms.controller.model.request.CourseContentRequest;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 @Entity
-@Table(name = "course_content")
+@Table(name = "course_content_old")
 public class CourseContentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,6 +23,12 @@ public class CourseContentEntity {
     private String content;
 
     public CourseContentEntity() {
+    }
+
+    public CourseContentEntity(CourseEntity courseEntity, CourseContentRequest request) {
+        this.course = courseEntity;
+        this.content = request.getContent();
+        this.lastUpdateDate = LocalDateTime.now(ZoneId.of("US/Eastern"));
     }
 
     public Integer getId() {

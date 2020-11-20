@@ -1,5 +1,6 @@
 package edu.uncc.itcs.lightbulblms.service;
 
+import edu.uncc.itcs.lightbulblms.controller.model.request.CourseContentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CourseMemberAssignmentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.response.*;
@@ -80,5 +81,11 @@ public class CourseService {
         List<CourseContentEntity> contentEntities = courseContentRepo.findByCourseId(courseId);
 
         return new CourseContentResponse(contentEntities.stream().map(CourseContent::new).collect(Collectors.toList()));
+    }
+
+    public CourseContent createContentForCourseId(Integer courseId, CourseContentRequest request) {
+        CourseContentEntity entity = new CourseContentEntity(courseRepo.findById(courseId).get(), request);
+        courseContentRepo.save(entity);
+        return new CourseContent(entity);
     }
 }

@@ -15,7 +15,7 @@ public class CourseContent {
         this.contentId = courseContentEntity.getId();
         this.content = courseContentEntity.getContent();
         this.creationTime = courseContentEntity.getCreationDate().atZone(ZoneId.of("GMT")).withZoneSameInstant(ZoneId.of("US/Eastern"));
-        this.lastUpdatedTime = courseContentEntity.getLastUpdateDate().atZone(ZoneId.of("GMT")).withZoneSameInstant(ZoneId.of("US/Eastern"));
+        this.lastUpdatedTime = creationTime;
     }
 
     public String getContent() {

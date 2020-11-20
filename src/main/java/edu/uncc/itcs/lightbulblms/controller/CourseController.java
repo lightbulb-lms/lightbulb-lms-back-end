@@ -120,4 +120,18 @@ public class CourseController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+    @PutMapping("/course/{courseId}/content/{contentId}")
+    @ApiOperation(value = "Update a piece of content content for a given course", response = CourseContent.class)
+    @TeacherOperation
+    public ResponseEntity<CourseContent> updateCourseContentForCourseID(@Valid @PathVariable("courseId") @Positive @ApiParam(value = "The course ID, as retrieved by the /courses API") Integer courseId,
+                                                                        @Valid @PathVariable("contentId") @Positive @ApiParam(value = "The content ID, as retrieved by the /course/{courseId}/content API") Integer contentId,
+                                                                        @Valid @RequestBody CourseContentRequest request,
+                                                                        JwtAuthenticationToken auth) {
+        if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
+            return ResponseEntity.ok(courseService.updateContentForCourseId(courseId, contentId, request));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
 }

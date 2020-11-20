@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 @Entity
-@Table(name = "course_content_old")
+@Table(name = "course_content")
 public class CourseContentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

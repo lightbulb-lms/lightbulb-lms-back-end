@@ -9,6 +9,8 @@ import java.util.List;
 public interface CourseMemberRepo extends JpaRepository<CourseMemberEntity, Integer> {
     List<CourseMemberEntity> findByCourseId(Integer courseId);
 
+    List<CourseMemberEntity> findByUserId(String userId);
+
     @Transactional
     Integer deleteByCourseIdAndUserId(Integer courseId, String userId);
 }

@@ -2,9 +2,9 @@ package edu.uncc.itcs.lightbulblms.service;
 
 import edu.uncc.itcs.lightbulblms.controller.model.request.CourseMemberAssignmentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
-import edu.uncc.itcs.lightbulblms.controller.model.response.AllCoursesResponse;
 import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMember;
 import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMembersResponse;
+import edu.uncc.itcs.lightbulblms.controller.model.response.MultipleCoursesResponse;
 import edu.uncc.itcs.lightbulblms.repo.CourseMemberRepo;
 import edu.uncc.itcs.lightbulblms.repo.CourseRepo;
 import edu.uncc.itcs.lightbulblms.repo.model.CourseEntity;
@@ -31,8 +31,8 @@ public class CourseService {
         this.userService = userService;
     }
 
-    public AllCoursesResponse getAllCourses() {
-        AllCoursesResponse response = new AllCoursesResponse();
+    public MultipleCoursesResponse getAllCourses() {
+        MultipleCoursesResponse response = new MultipleCoursesResponse();
         response.setCourses(courseRepo.findAll());
         return response;
     }
@@ -62,5 +62,15 @@ public class CourseService {
 
     public void removeUserFromCourse(Integer courseId, CourseMemberAssignmentRequest request) {
         courseMemberRepo.deleteByCourseIdAndUserId(courseId, request.getUserId());
+    }
+
+    public MultipleCoursesResponse getCoursesForUserId(String userId) {
+        List<CourseMemberEntity> courseMemberEntities = courseMemberRepo.findByUserId(userId);
+        List<CourseEntity> courses = courseMemberEntities.stream()
+                .map(memberEntity -> memberEntity.getCourse())
+                .collect(Collectors.toList());
+        MultipleCoursesResponse response = new MultipleCoursesResponse();
+        response.setCourses(courses);
+        return response;
     }
 }

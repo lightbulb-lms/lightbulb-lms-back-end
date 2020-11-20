@@ -5,6 +5,7 @@ import edu.uncc.itcs.lightbulblms.controller.annotation.StudentOperation;
 import edu.uncc.itcs.lightbulblms.controller.annotation.TeacherOperation;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
@@ -35,6 +36,7 @@ public class SwaggerConfig {
     @Bean
     public Docket adminAPIs() {
         return new Docket(DocumentationType.OAS_30)
+                .ignoredParameterTypes(JwtAuthenticationToken.class)
                 .groupName("Admin")
                 .select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(AdminOperation.class))
@@ -49,6 +51,7 @@ public class SwaggerConfig {
     @Bean
     public Docket teacherAPIs() {
         return new Docket(DocumentationType.OAS_30)
+                .ignoredParameterTypes(JwtAuthenticationToken.class)
                 .groupName("Teacher")
                 .select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(TeacherOperation.class))
@@ -63,6 +66,7 @@ public class SwaggerConfig {
     @Bean
     public Docket studentAPIs() {
         return new Docket(DocumentationType.OAS_30)
+                .ignoredParameterTypes(JwtAuthenticationToken.class)
                 .groupName("Student")
                 .select()
                 .apis(RequestHandlerSelectors.withMethodAnnotation(StudentOperation.class))

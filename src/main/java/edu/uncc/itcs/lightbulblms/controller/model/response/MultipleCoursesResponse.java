@@ -5,11 +5,11 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
-public class AllCoursesResponse {
+public class MultipleCoursesResponse {
     @ApiModelProperty(value = "List of courses")
     private List<CourseEntity> courses;
 
-    public AllCoursesResponse() {
+    public MultipleCoursesResponse() {
     }
 
     public List<CourseEntity> getCourses() {

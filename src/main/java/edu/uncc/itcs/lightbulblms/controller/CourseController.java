@@ -1,10 +1,12 @@
 package edu.uncc.itcs.lightbulblms.controller;
 
 import edu.uncc.itcs.lightbulblms.controller.annotation.AdminOperation;
+import edu.uncc.itcs.lightbulblms.controller.annotation.StudentOperation;
+import edu.uncc.itcs.lightbulblms.controller.annotation.TeacherOperation;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CourseMemberAssignmentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
-import edu.uncc.itcs.lightbulblms.controller.model.response.AllCoursesResponse;
 import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMembersResponse;
+import edu.uncc.itcs.lightbulblms.controller.model.response.MultipleCoursesResponse;
 import edu.uncc.itcs.lightbulblms.repo.model.CourseEntity;
 import edu.uncc.itcs.lightbulblms.repo.model.CourseMemberEntity;
 import edu.uncc.itcs.lightbulblms.service.CourseService;
@@ -12,6 +14,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,10 +32,20 @@ public class CourseController {
     }
 
     @GetMapping("/courses")
-    @ApiOperation(value = "Retrieve all courses", notes = "Retrieves all courses", response = AllCoursesResponse.class)
+    @ApiOperation(value = "Retrieve all courses", notes = "Retrieves all courses", response = MultipleCoursesResponse.class)
     @AdminOperation
-    public ResponseEntity<AllCoursesResponse> getAllCourses() {
+    public ResponseEntity<MultipleCoursesResponse> getAllCourses() {
         return ResponseEntity.ok(courseService.getAllCourses());
+    }
+
+
+    @GetMapping("/assigned-courses")
+    @ApiOperation(value = "Retrieve courses the user is assigned", notes = "Only returns courses for the logged in user", response = MultipleCoursesResponse.class)
+    @TeacherOperation
+    @StudentOperation
+    public ResponseEntity<MultipleCoursesResponse> getAllEnrolledCourses(JwtAuthenticationToken auth) {
+        String userId = (String) auth.getTokenAttributes().get("uid");
+        return ResponseEntity.ok(courseService.getCoursesForUserId(userId));
     }
 
     @PostMapping("/course")
@@ -63,7 +76,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/course/{courseId}/member")
-    @ApiOperation(value = "Remove a user from a course", response = CourseMemberEntity.class)
+    @ApiOperation(value = "Remove a user from a course. Returns 204 no content")
     @AdminOperation
     public ResponseEntity removeMemberFromCourse(@Valid
                                                  @PathVariable("courseId")

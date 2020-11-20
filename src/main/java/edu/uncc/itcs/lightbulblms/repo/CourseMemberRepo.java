@@ -11,6 +11,8 @@ public interface CourseMemberRepo extends JpaRepository<CourseMemberEntity, Inte
 
     List<CourseMemberEntity> findByUserId(String userId);
 
+    Boolean existsByCourseIdAndUserId(Integer courseId, String userId);
+
     @Transactional
     Integer deleteByCourseIdAndUserId(Integer courseId, String userId);
 }

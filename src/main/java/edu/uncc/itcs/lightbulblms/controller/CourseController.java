@@ -5,14 +5,17 @@ import edu.uncc.itcs.lightbulblms.controller.annotation.StudentOperation;
 import edu.uncc.itcs.lightbulblms.controller.annotation.TeacherOperation;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CourseMemberAssignmentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
+import edu.uncc.itcs.lightbulblms.controller.model.response.CourseContentResponse;
 import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMembersResponse;
 import edu.uncc.itcs.lightbulblms.controller.model.response.MultipleCoursesResponse;
+import edu.uncc.itcs.lightbulblms.repo.CourseMemberRepo;
 import edu.uncc.itcs.lightbulblms.repo.model.CourseEntity;
 import edu.uncc.itcs.lightbulblms.repo.model.CourseMemberEntity;
 import edu.uncc.itcs.lightbulblms.service.CourseService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.validation.annotation.Validated;
@@ -25,10 +28,12 @@ import javax.validation.constraints.Positive;
 @Validated
 public class CourseController {
     private final CourseService courseService;
+    private final CourseMemberRepo courseMemberRepo;
 
     @Autowired
-    public CourseController(CourseService courseService) {
+    public CourseController(CourseService courseService, CourseMemberRepo courseMemberRepo) {
         this.courseService = courseService;
+        this.courseMemberRepo = courseMemberRepo;
     }
 
     @GetMapping("/courses")
@@ -43,7 +48,7 @@ public class CourseController {
     @ApiOperation(value = "Retrieve courses the user is assigned", notes = "Only returns courses for the logged in user", response = MultipleCoursesResponse.class)
     @TeacherOperation
     @StudentOperation
-    public ResponseEntity<MultipleCoursesResponse> getAllEnrolledCourses(JwtAuthenticationToken auth) {
+    public ResponseEntity<MultipleCoursesResponse> getAssignedCourses(JwtAuthenticationToken auth) {
         String userId = (String) auth.getTokenAttributes().get("uid");
         return ResponseEntity.ok(courseService.getCoursesForUserId(userId));
     }
@@ -87,5 +92,17 @@ public class CourseController {
     ) {
         courseService.removeUserFromCourse(courseId, request);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/course/{courseId}/content")
+    @ApiOperation(value = "Retrieve content for a given course", response = CourseMembersResponse.class)
+    @TeacherOperation
+    @StudentOperation
+    public ResponseEntity<CourseContentResponse> getCourseContentForCourseID(@Valid @PathVariable("courseId") @Positive @ApiParam(value = "The course ID, as retrieved by the /courses API") Integer courseId, JwtAuthenticationToken auth) {
+        if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
+            return ResponseEntity.ok(courseService.getCourseContentForCourseId(courseId));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
     }
 }

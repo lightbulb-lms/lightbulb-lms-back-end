@@ -2,11 +2,11 @@ package edu.uncc.itcs.lightbulblms.service;
 
 import edu.uncc.itcs.lightbulblms.controller.model.request.CourseMemberAssignmentRequest;
 import edu.uncc.itcs.lightbulblms.controller.model.request.CreateCourseRequest;
-import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMember;
-import edu.uncc.itcs.lightbulblms.controller.model.response.CourseMembersResponse;
-import edu.uncc.itcs.lightbulblms.controller.model.response.MultipleCoursesResponse;
+import edu.uncc.itcs.lightbulblms.controller.model.response.*;
+import edu.uncc.itcs.lightbulblms.repo.CourseContentRepo;
 import edu.uncc.itcs.lightbulblms.repo.CourseMemberRepo;
 import edu.uncc.itcs.lightbulblms.repo.CourseRepo;
+import edu.uncc.itcs.lightbulblms.repo.model.CourseContentEntity;
 import edu.uncc.itcs.lightbulblms.repo.model.CourseEntity;
 import edu.uncc.itcs.lightbulblms.repo.model.CourseMemberEntity;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,12 +23,14 @@ public class CourseService {
     private final CourseRepo courseRepo;
     private final CourseMemberRepo courseMemberRepo;
     private final UserService userService;
+    private final CourseContentRepo courseContentRepo;
 
     @Autowired
-    public CourseService(CourseRepo courseRepo, CourseMemberRepo courseMemberRepo, UserService userService) {
+    public CourseService(CourseRepo courseRepo, CourseMemberRepo courseMemberRepo, UserService userService, CourseContentRepo courseContentRepo) {
         this.courseRepo = courseRepo;
         this.courseMemberRepo = courseMemberRepo;
         this.userService = userService;
+        this.courseContentRepo = courseContentRepo;
     }
 
     public MultipleCoursesResponse getAllCourses() {
@@ -72,5 +74,11 @@ public class CourseService {
         MultipleCoursesResponse response = new MultipleCoursesResponse();
         response.setCourses(courses);
         return response;
+    }
+
+    public CourseContentResponse getCourseContentForCourseId(Integer courseId) {
+        List<CourseContentEntity> contentEntities = courseContentRepo.findByCourseId(courseId);
+
+        return new CourseContentResponse(contentEntities.stream().map(CourseContent::new).collect(Collectors.toList()));
     }
 }

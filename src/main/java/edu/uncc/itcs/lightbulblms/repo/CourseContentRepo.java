@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CourseContentRepo extends JpaRepository<CourseContentEntity, Integer> {
     List<CourseContentEntity> findByCourseId(Integer courseId);
+
+    void deleteById(Integer contentId);
 }

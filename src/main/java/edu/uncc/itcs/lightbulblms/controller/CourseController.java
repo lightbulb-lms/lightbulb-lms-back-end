@@ -83,7 +83,7 @@ public class CourseController {
     }
 
     @DeleteMapping("/course/{courseId}/member")
-    @ApiOperation(value = "Remove a user from a course. Returns 204 no content")
+    @ApiOperation(value = "Remove a user from a course. Returns 204 no content on success")
     @AdminOperation
     public ResponseEntity removeMemberFromCourse(@Valid
                                                  @PathVariable("courseId")
@@ -130,6 +130,20 @@ public class CourseController {
                                                                         JwtAuthenticationToken auth) {
         if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
             return ResponseEntity.ok(courseService.updateContentForCourseId(courseId, contentId, request));
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+    }
+
+    @DeleteMapping("/course/{courseId}/content/{contentId}")
+    @ApiOperation(value = "Delete a piece of content content for a given course. Returns 204 no content on success")
+    @TeacherOperation
+    public ResponseEntity deleteCourseContent(@Valid @PathVariable("courseId") @Positive @ApiParam(value = "The course ID, as retrieved by the /courses API") Integer courseId,
+                                              @Valid @PathVariable("contentId") @Positive @ApiParam(value = "The content ID, as retrieved by the /course/{courseId}/content API") Integer contentId,
+                                              JwtAuthenticationToken auth) {
+        if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
+            courseService.deleteCourseContent(contentId);
+            return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

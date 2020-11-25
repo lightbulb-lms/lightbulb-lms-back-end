@@ -13,7 +13,8 @@ import edu.uncc.itcs.lightbulblms.repo.model.CourseMemberEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -93,7 +94,7 @@ public class CourseService {
     public CourseContent updateContentForCourseId(Integer courseId, Integer contentId, CourseContentRequest request) {
         CourseContentEntity entity = courseContentRepo.findByIdAndCourseId(contentId, courseId);
         entity.setContent(request.getContent());
-        entity.setLastUpdateDate(LocalDateTime.now());
+        entity.setLastUpdateDate(ZonedDateTime.now(ZoneId.of("GMT")).toLocalDateTime());
         CourseContentEntity updatedEntry = courseContentRepo.save(entity);
         return new CourseContent(updatedEntry);
     }

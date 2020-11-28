@@ -48,7 +48,6 @@ public class CourseController {
 
     @GetMapping("/assigned-courses")
     @ApiOperation(value = "Retrieve courses the user is assigned", notes = "Only returns courses for the logged in user", response = MultipleCoursesResponse.class)
-    @TeacherOperation
     @StudentOperation
     public ResponseEntity<MultipleCoursesResponse> getAssignedCourses(JwtAuthenticationToken auth) {
         String userId = (String) auth.getTokenAttributes().get("uid");
@@ -98,7 +97,6 @@ public class CourseController {
 
     @GetMapping("/course/{courseId}/content")
     @ApiOperation(value = "Retrieve content for a given course", response = CourseContentResponse.class)
-    @TeacherOperation
     @StudentOperation
     public ResponseEntity<CourseContentResponse> getCourseContentForCourseID(@Valid @PathVariable("courseId") @Positive @ApiParam(value = "The course ID, as retrieved by the /courses API") Integer courseId, JwtAuthenticationToken auth) {
         if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {

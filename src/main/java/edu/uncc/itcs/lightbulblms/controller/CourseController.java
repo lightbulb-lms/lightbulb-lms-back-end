@@ -102,7 +102,7 @@ public class CourseController {
         if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
             return ResponseEntity.ok(courseService.getCourseContentForCourseId(courseId));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -115,7 +115,7 @@ public class CourseController {
         if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
             return ResponseEntity.ok(courseService.createContentForCourseId(courseId, request));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -129,7 +129,7 @@ public class CourseController {
         if (courseMemberRepo.existsByCourseIdAndUserId(courseId, (String) auth.getTokenAttributes().get("uid"))) {
             return ResponseEntity.ok(courseService.updateContentForCourseId(courseId, contentId, request));
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 
@@ -143,7 +143,7 @@ public class CourseController {
             courseService.deleteCourseContent(contentId, courseId);
             return ResponseEntity.noContent().build();
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
     }
 }
